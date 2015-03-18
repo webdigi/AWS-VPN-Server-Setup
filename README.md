@@ -12,5 +12,5 @@ Please refer to the blog article with all details on [setting up your VPN server
 - Your commits and code updates are welcome. Looking forward to all the pull requests :)
 
 ### License
-Licensed under the [MIT license](https://github.com/webdigi/GmailScheduler/blob/master/LICENSE.txt). Maintained by Webdigi, a [Web Development agency](https://www.webdigi.co.uk) in London, UK
+Licensed under the [MIT license](https://github.com/webdigi/AWS-VPN-Server-Setup/blob/master/LICENSE.txt). Maintained by Webdigi, a [Web Development agency](https://www.webdigi.co.uk) in London, UK
 

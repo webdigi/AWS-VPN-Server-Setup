@@ -11,7 +11,7 @@ furnished to do so, subject to the following conditions:
 
 The above copyright notice and this permission notice shall be included in
 all copies or substantial portions of the Software. All copies should reference 
-the project Github page and link to https://www.webdigi.co.uk
+the project Github page https://github.com/webdigi/AWS-VPN-Server-Setup/ and link to https://www.webdigi.co.uk
 
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
