@@ -1,0 +1,314 @@
+{
+  "AWSTemplateFormatVersion": "2010-09-09",
+  "Description": "Setting up your own private and secure VPN. You can read instructions on our blog https://www.webdigi.co.uk/blog/2015/how-to-setup-your-own-private-secure-free-vpn-on-the-amazon-aws-cloud-in-10-minutes/ and you can follow video instructions on Youtube https://www.youtube.com/watch?v=fBBERp5CUgo",
+  "Mappings": {
+    "AWSInstanceType2Arch": {
+      "High.Speed.VPN-Paid": {
+        "InstanceType": "t2.medium"
+      },
+      "Standard.VPN-Free": {
+        "InstanceType": "t2.micro"
+      },
+      "Ultra.High.Speed.VPN-Paid": {
+        "InstanceType": "m3.xlarge"
+      }
+    },
+    "AWSRegionArch2AMI": {
+      "ap-northeast-1": {
+        "HVM64": "ami-20b6aa21"
+      },
+      "ap-southeast-1": {
+        "HVM64": "ami-ca381398"
+      },
+      "ap-southeast-2": {
+        "HVM64": "ami-abeb9e91"
+      },
+      "eu-central-1": {
+        "HVM64": "ami-9a380b87"
+      },
+      "eu-west-1": {
+        "HVM64": "ami-234ecc54"
+      },
+      "sa-east-1": {
+        "HVM64": "ami-69f54974"
+      },
+      "us-east-1": {
+        "HVM64": "ami-9a562df2"
+      },
+      "us-west-1": {
+        "HVM64": "ami-5c120b19"
+      },
+      "us-west-2": {
+        "HVM64": "ami-29ebb519"
+      }
+    }
+  },
+  "Outputs": {
+    "VPNServerAddress": {
+      "Description": "Use the IP as Server Address or VPN Host",
+      "Value": {
+        "Fn::Join": [
+          "",
+          [
+            "",
+            {
+              "Fn::GetAtt": [
+                "VPNServerInstance",
+                "PublicIp"
+              ]
+            }
+          ]
+        ]
+      }
+    }
+  },
+  "Parameters": {
+    "Speed": {
+      "AllowedValues": [
+        "Standard.VPN-Free",
+        "High.Speed.VPN-Paid",
+        "Ultra.High.Speed.VPN-Paid"
+      ],
+      "Default": "Standard.VPN-Free",
+      "Description": "Network Speed of VPN Server. Standard should do for most browsing and video.",
+      "Type": "String"
+    },
+    "Username": {
+      "AllowedPattern": "[a-zA-Z][a-zA-Z0-9]*",
+      "ConstraintDescription": "must begin with a letter and contain only alphanumeric characters.",
+      "Description": "VPN Username",
+      "MaxLength": "255",
+      "MinLength": "1",
+      "Type": "String"
+    },
+    "VPNPassword": {
+      "ConstraintDescription": "must contain atleast 4 characters.",
+      "Description": "VPN Password (Min 4 characters)",
+      "MaxLength": "255",
+      "MinLength": "4",
+      "NoEcho": "true",
+      "Type": "String"
+    },
+    "VPNPhrase": {
+      "ConstraintDescription": "must contain atleast 4 characters.",
+      "Description": "Passphrase for IPSEC PSK (Min 4 characters)",
+      "MaxLength": "255",
+      "MinLength": "4",
+      "NoEcho": "true",
+      "Type": "String"
+    }
+  },
+  "Resources": {
+    "VPNSecurityGroup": {
+      "Properties": {
+        "GroupDescription": "VPN Security Groups",
+        "SecurityGroupIngress": [
+          {
+            "CidrIp": "0.0.0.0/0",
+            "FromPort": "500",
+            "IpProtocol": "tcp",
+            "ToPort": "500"
+          },
+          {
+            "CidrIp": "0.0.0.0/0",
+            "FromPort": "500",
+            "IpProtocol": "udp",
+            "ToPort": "500"
+          },
+          {
+            "CidrIp": "0.0.0.0/0",
+            "FromPort": "4500",
+            "IpProtocol": "udp",
+            "ToPort": "4500"
+          },
+          {
+            "CidrIp": "0.0.0.0/0",
+            "FromPort": "1723",
+            "IpProtocol": "tcp",
+            "ToPort": "1723"
+          },
+          {
+            "CidrIp": "0.0.0.0/0",
+            "FromPort": "1723",
+            "IpProtocol": "udp",
+            "ToPort": "1723"
+          }
+        ]
+      },
+      "Type": "AWS::EC2::SecurityGroup"
+    },
+    "VPNServerInstance": {
+      "Properties": {
+        "ImageId": {
+          "Fn::FindInMap": [
+            "AWSRegionArch2AMI",
+            {
+              "Ref": "AWS::Region"
+            },
+            "HVM64"
+          ]
+        },
+        "InstanceType": {
+          "Fn::FindInMap": [
+            "AWSInstanceType2Arch",
+            {
+              "Ref": "Speed"
+            },
+            "InstanceType"
+          ]
+        },
+        "SecurityGroups": [
+          {
+            "Ref": "VPNSecurityGroup"
+          }
+        ],
+        "UserData": {
+          "Fn::Base64": {
+            "Fn::Join": [
+              "",
+              [
+                "#!/bin/sh\n",
+                "VPN_USER=",
+                {
+                  "Ref": "Username"
+                },
+                "\n",
+                "VPN_PASSWORD=",
+                {
+                  "Ref": "VPNPassword"
+                },
+                "\n",
+                "IPSEC_PSK=",
+                {
+                  "Ref": "VPNPhrase"
+                },
+                "\n",
+                "\n",
+                "# Update server\n",
+                "apt-get update && apt-get upgrade -y\n",
+                "\n",
+                "# VPN 1 - Setup L2TP-IPSEC\n",
+                "PRIVATE_IP=`wget -q -O - 'http://169.254.169.254/latest/meta-data/local-ipv4'`\n",
+                "PUBLIC_IP=`wget -q -O - 'http://169.254.169.254/latest/meta-data/public-ipv4'`\n",
+                "\n",
+                "apt-get install -y openswan xl2tpd\n",
+                "\n",
+                "cat > /etc/ipsec.conf <<EOF\n",
+                "version 2.0\n",
+                "\n",
+                "config setup\n",
+                "  dumpdir=/var/run/pluto/\n",
+                "  nat_traversal=yes\n",
+                "  virtual_private=%v4:10.0.0.0/8,%v4:192.168.0.0/16,%v4:172.16.0.0/12,%v4:25.0.0.0/8,%v6:fd00::/8,%v6:fe80::/10\n",
+                "  oe=off\n",
+                "  protostack=netkey\n",
+                "  nhelpers=0\n",
+                "  interfaces=%defaultroute\n",
+                "\n",
+                "conn vpnpsk\n",
+                "  auto=add\n",
+                "  left=$PRIVATE_IP\n",
+                "  leftid=$PUBLIC_IP\n",
+                "  leftsubnet=$PRIVATE_IP/32\n",
+                "  leftnexthop=%defaultroute\n",
+                "  leftprotoport=17/1701\n",
+                "  rightprotoport=17/%any\n",
+                "  right=%any\n",
+                "  rightsubnetwithin=0.0.0.0/0\n",
+                "  forceencaps=yes\n",
+                "  authby=secret\n",
+                "  pfs=no\n",
+                "  type=transport\n",
+                "  auth=esp\n",
+                "  ike=3des-sha1\n",
+                "  phase2alg=3des-sha1\n",
+                "  dpddelay=30\n",
+                "  dpdtimeout=120\n",
+                "  dpdaction=clear\n",
+                "EOF\n",
+                "\n",
+                "cat > /etc/ipsec.secrets <<EOF\n",
+                "$PUBLIC_IP  %any  : PSK \"$IPSEC_PSK\"\n",
+                "EOF\n",
+                "\n",
+                "cat > /etc/xl2tpd/xl2tpd.conf <<EOF\n",
+                "[global]\n",
+                "port = 1701\n",
+                "\n",
+                ";debug avp = yes\n",
+                ";debug network = yes\n",
+                ";debug state = yes\n",
+                ";debug tunnel = yes\n",
+                "\n",
+                "[lns default]\n",
+                "ip range = 192.168.42.10-192.168.42.250\n",
+                "local ip = 192.168.42.1\n",
+                "require chap = yes\n",
+                "refuse pap = yes\n",
+                "require authentication = yes\n",
+                "name = l2tpd\n",
+                ";ppp debug = yes\n",
+                "pppoptfile = /etc/ppp/options.xl2tpd\n",
+                "length bit = yes\n",
+                "EOF\n",
+                "\n",
+                "cat > /etc/ppp/options.xl2tpd <<EOF\n",
+                "ipcp-accept-local\n",
+                "ipcp-accept-remote\n",
+                "ms-dns 8.8.8.8\n",
+                "ms-dns 8.8.4.4\n",
+                "noccp\n",
+                "auth\n",
+                "crtscts\n",
+                "idle 1800\n",
+                "mtu 1280\n",
+                "mru 1280\n",
+                "lock\n",
+                "connect-delay 5000\n",
+                "EOF\n",
+                "\n",
+                "cat > /etc/ppp/chap-secrets <<EOF\n",
+                "# Secrets for authentication using CHAP\n",
+                "# client\tserver\tsecret\t\t\tIP addresses\n",
+                "\n",
+                "$VPN_USER\tl2tpd   $VPN_PASSWORD   *\n",
+                "EOF\n",
+                "\n",
+                "iptables -t nat -A POSTROUTING -s 192.168.42.0/24 -o eth0 -j MASQUERADE\n",
+                "echo 1 > /proc/sys/net/ipv4/ip_forward\n",
+                "\n",
+                "iptables-save > /etc/iptables.rules\n",
+                "\n",
+                "cat > /etc/network/if-pre-up.d/iptablesload <<EOF\n",
+                "#!/bin/sh\n",
+                "iptables-restore < /etc/iptables.rules\n",
+                "echo 1 > /proc/sys/net/ipv4/ip_forward\n",
+                "exit 0\n",
+                "EOF\n",
+                "\n",
+                "chmod a+x /etc/network/if-pre-up.d/iptablesload\n",
+                "\n",
+                "/etc/init.d/ipsec restart\n",
+                "/etc/init.d/xl2tpd restart\n",
+                "\n",
+                "#VPN 2 - Setup PPTP Server\n",
+                "apt-get install pptpd -y\n",
+                "echo \"localip 10.0.0.1\" >> /etc/pptpd.conf\n",
+                "echo \"remoteip 10.0.0.100-200\" >> /etc/pptpd.conf\n",
+                "echo \"$VPN_USER pptpd $VPN_PASSWORD *\" >> /etc/ppp/chap-secrets\n",
+                "echo \"ms-dns 8.8.8.8\" >> /etc/ppp/pptpd-options\n",
+                "echo \"ms-dns 8.8.4.4\" >> /etc/ppp/pptpd-options\n",
+                "service pptpd restart\n",
+                "\n",
+                "echo \"net.ipv4.ip_forward = 1\" >> /etc/sysctl.conf\n",
+                "sysctl -p\n",
+                "iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE && iptables-save\n"
+              ]
+            ]
+          }
+        }
+      },
+      "Type": "AWS::EC2::Instance"
+    }
+  }
+}
