@@ -1,5 +1,5 @@
 # Rolling out your own private VPN server on AWS cloud in 10 minutes
-Please refer to the blog article with all details on [setting up your VPN server on the AWS cloud using cloudformation templates](https://www.webdigi.co.uk/blog/2015/how-to-setup-your-own-private-secure-free-vpn-on-the-amazon-aws-cloud-in-10-minutes/).
+Please refer to the blog article with all details on [setting up your VPN server on the AWS cloud using cloudformation templates](https://www.webdigi.co.uk/blog/2015/how-to-setup-your-own-private-secure-free-vpn-on-the-amazon-aws-cloud-in-10-minutes/). You can launch a VPN on any of AWS regions which include Tokyo, Singapore, Sydney, Frankfurt, Ireland, Sao Paulo, N. Virginia, N. California, Oregon.
 
 ## Video walkthrough on setting up the server
 [![YouTubeVideo](http://i.imgur.com/OMQUry7.png)](http://youtu.be/fBBERp5CUgo)
