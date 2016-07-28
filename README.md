@@ -23,7 +23,7 @@ Please refer to the blog article with all details on [setting up your VPN server
 ## Further support & updates
 - We look forward to your feedback on how we can improve this system. 
 - We currently setup VPN with PPTP and L2TP-IPSEC. This can be extended to include openvpn support and enhancements.
-- Your commits and code updates are welcome. Looking forward to all the pull requests :)
+- Your commits and code updates are welcome. Changes are only required to src/templates in most cases. Looking forward to all the pull requests :)
 
 ### License
 Licensed under the [MIT license](https://github.com/webdigi/AWS-VPN-Server-Setup/blob/master/LICENSE.txt). Maintained by Webdigi, a [Web Development agency](https://www.webdigi.co.uk) in London, UK
