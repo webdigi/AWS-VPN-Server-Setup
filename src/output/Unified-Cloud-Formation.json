@@ -96,7 +96,11 @@
       "MinLength": "4",
       "NoEcho": "true",
       "Type": "String"
-    }
+    },
+    "KeyName": {
+      "Description": "Select the ssh key pair",
+      "Type": "AWS::EC2::KeyPair::KeyName"
+    },
   },
   "Resources": {
     "VPNSecurityGroup": {
