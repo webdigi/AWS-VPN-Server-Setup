@@ -33,6 +33,10 @@
       "Type" : "String",
       "Default" : "<%= @speed_standard_free %>",
       "AllowedValues" : [ "<%= @speed_standard_free %>", "<%= @speed_high_free %>", "<%= @speed_ultra_free %>" ]
+    },
+    "KeyName": {
+      "Description": "Select the ssh key pair",
+      "Type": "AWS::EC2::KeyPair::KeyName"
     }
   },  
 
