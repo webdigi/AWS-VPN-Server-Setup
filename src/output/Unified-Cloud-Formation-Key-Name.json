@@ -40,6 +40,9 @@
       },
       "us-west-2": {
         "HVM64": "ami-29ebb519"
+      },
+      "ap-south-1": {
+        "HVM64": "ami-4eff8a21"
       }
     }
   },
