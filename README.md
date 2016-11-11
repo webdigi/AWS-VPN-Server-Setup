@@ -27,6 +27,7 @@ Please refer to the blog article with all details on [setting up your VPN server
 
 ## Updates
 - 12 September 2016, (Advanced users) See output/Unified-Cloud-Formation-Key-Name.json if you like to have a KEY NAME specified to SSH to the instance. Thanks to @tedi for the pull request.
+- 11 November 2016, (Mac users) PPTP is not supported on the latest macOS Sierra so please use the IPSEC over L2TP.
 
 ### License
 Licensed under the [MIT license](https://github.com/webdigi/AWS-VPN-Server-Setup/blob/master/LICENSE.txt). Maintained by Webdigi, a [Web Development agency](https://www.webdigi.co.uk) in London, UK
