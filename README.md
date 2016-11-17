@@ -26,8 +26,9 @@ Please refer to the blog article with all details on [setting up your VPN server
 - Your commits and code updates are welcome. Changes are only required to src/templates in most cases. Looking forward to all the pull requests :)
 
 ## Updates
+- 11 November 2016, (Mac users) PPTP is not supported on the latest macOS Sierra so please use the IPSEC over L2TP. [Please see screenshots and details on setting up L2TP over IPSEC in the blog](https://www.webdigi.co.uk/blog/2015/how-to-setup-your-own-private-secure-free-vpn-on-the-amazon-aws-cloud-in-10-minutes/).
 - 12 September 2016, (Advanced users) See output/Unified-Cloud-Formation-Key-Name.json if you like to have a KEY NAME specified to SSH to the instance. Thanks to @tedi for the pull request.
-- 11 November 2016, (Mac users) PPTP is not supported on the latest macOS Sierra so please use the IPSEC over L2TP.
+
 
 ### License
 Licensed under the [MIT license](https://github.com/webdigi/AWS-VPN-Server-Setup/blob/master/LICENSE.txt). Maintained by Webdigi, a [Web Development agency](https://www.webdigi.co.uk) in London, UK
