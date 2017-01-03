@@ -43,7 +43,13 @@
       },
       "ap-south-1": {
         "HVM64": "ami-4eff8a21"
-      }
+      },
+      "eu-west-2": {
+        "HVM64": "ami-d6cbc1b2"
+      },
+      "eu-west-2": { 
+        "HVM64": "ami-45eae021"  
+      }     
     }
   },
   "Outputs": {
