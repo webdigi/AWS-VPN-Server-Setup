@@ -27,6 +27,7 @@ Please refer to the blog article with all details on [setting up your VPN server
 - Your commits and code updates are welcome. Changes are only required to src/templates in most cases. Looking forward to all the pull requests :)
 
 ## Updates
+- 4 Feb 2017, Added Ohio (US-EAST-2) region support.
 - 3 January 2017, Added London region support.
 - 11 November 2016, (Mac users) PPTP is not supported on the latest macOS Sierra so please use the IPSEC over L2TP. [Please see screenshots and details on setting up L2TP over IPSEC in the blog](https://www.webdigi.co.uk/blog/2015/how-to-setup-your-own-private-secure-free-vpn-on-the-amazon-aws-cloud-in-10-minutes/).
 - 12 September 2016, (Advanced users) See output/Unified-Cloud-Formation-Key-Name.json if you like to have a KEY NAME specified to SSH to the instance. Thanks to @tedi for the pull request.
