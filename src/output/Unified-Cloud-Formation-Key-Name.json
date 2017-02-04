@@ -46,7 +46,10 @@
       },
       "eu-west-2": { 
         "HVM64": "ami-45eae021"  
-      }      
+      },
+      "us-east-2": { 
+        "HVM64": "ami-41d48e24"  
+      }        
     }
   },
   "Outputs": {
