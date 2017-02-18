@@ -1,6 +1,6 @@
 # Settings for a router with DD-WRT
 
-Submitted by Simon Moran on Feb 18th 2017.
+Submitted by Simon M on Feb 18th 2017.
 
 Go to Setup -> Basic Setup    
 Connection Type: PPTP  
