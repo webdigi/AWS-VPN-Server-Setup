@@ -43,18 +43,20 @@
       "<%= @speed_ultra_free %>"      : { "InstanceType" : "m3.xlarge"  }
     },    
     "AWSRegionArch2AMI" : {
-      "us-east-1"      : { "HVM64" : "ami-9a562df2"  },
-      "us-west-2"      : { "HVM64" : "ami-29ebb519"  },
-      "us-west-1"      : { "HVM64" : "ami-5c120b19"  },
-      "eu-west-1"      : { "HVM64" : "ami-234ecc54"  },
-      "eu-central-1"   : { "HVM64" : "ami-9a380b87"  },      
-      "ap-southeast-1" : { "HVM64" : "ami-ca381398"  },
-      "ap-northeast-1" : { "HVM64" : "ami-20b6aa21"  },
-      "ap-southeast-2" : { "HVM64" : "ami-abeb9e91"  },
-      "sa-east-1"      : { "HVM64" : "ami-69f54974"  },
-      "ap-south-1"     : { "HVM64" : "ami-815625ee"  },
-      "eu-west-2"      : { "HVM64" : "ami-45eae021"  },
-      "us-east-2"      : { "HVM64" : "ami-41d48e24" }            
+      "us-east-1"      : { "HVM64" : "ami-80861296"  },
+      "us-east-2"      : { "HVM64" : "ami-618fab04" },      
+      "us-west-1"      : { "HVM64" : "ami-2afbde4a"  },
+      "us-west-2"      : { "HVM64" : "ami-efd0428f"  },      
+      "eu-west-1"      : { "HVM64" : "ami-a8d2d7ce"  },
+      "eu-west-2"      : { "HVM64" : "ami-f1d7c395"  },      
+      "eu-central-1"   : { "HVM64" : "ami-060cde69"  },      
+      "ap-northeast-1" : { "HVM64" : "ami-afb09dc8"  },
+      "ap-northeast-2" : { "HVM64" : "ami-66e33108"  },      
+      "ap-southeast-1" : { "HVM64" : "ami-8fcc75ec"  },      
+      "ap-southeast-2" : { "HVM64" : "ami-96666ff5"  },
+      "sa-east-1"      : { "HVM64" : "ami-4090f22c"  },
+      "ap-south-1"     : { "HVM64" : "ami-c2ee9dad"  },
+      "ca-central-1"   : { "HVM64" : "ami-b3d965d7" }     
     }
   },
 
@@ -95,6 +97,10 @@
     "VPNServerAddress" : {
       "Description" : "Use the IP as Server Address or VPN Host",
       "Value" : { "Fn::Join" : ["", ["", { "Fn::GetAtt" : [ "VPNServerInstance", "PublicIp" ]}]] }
+    },
+    "WebdigiNotes" : {
+      "Description" : "Allow upto 5 minutes after setup to connect. Please contact us at https://www.webdigi.co.uk/blog/2015/how-to-setup-your-own-private-secure-free-vpn-on-the-amazon-aws-cloud-in-10-minutes/ for any help!",
+      "Value" : "Comments" 
     }
   }
 }
