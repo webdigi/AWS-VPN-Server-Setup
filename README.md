@@ -18,7 +18,7 @@ Please refer to the blog article with all details on [setting up your VPN server
 - lono generate
 - you will now see that the file /src/output/Unified-Cloud-Formation.json is updated.
 - you can change the files config/lono.rb and the templates/* files to make necessary changes to the cloudformation template.
-  
+NOTE: All you really need is the output file for [cloudformation](https://github.com/webdigi/AWS-VPN-Server-Setup/tree/master/src/output) which you can even hand code. Lono is just to help put the user_data and variables together easily. 
 
 ## Further support & updates
 - We look forward to your feedback on how we can improve this system. 
