@@ -27,6 +27,7 @@ NOTE: All you really need is the output file for [cloudformation](https://github
 - Your commits and code updates are welcome. Changes are only required to src/templates in most cases. Looking forward to all the pull requests :)
 
 ## Updates
+- 19 Feb 2018, Added Paris (EU-WEST-3) region support.
 - 2 June 2017, we had comments from a few users that some new AWS accounts take a few hours before the account can be activated to use this service.
 - 4 Feb 2017, Added Ohio (US-EAST-2) region support.
 - 3 January 2017, Added London region support.

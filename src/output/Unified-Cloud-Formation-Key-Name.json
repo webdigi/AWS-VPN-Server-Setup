@@ -72,6 +72,9 @@
       "eu-west-2": {
         "HVM64": "ami-f1d7c395"
       },
+      "eu-west-3": {
+        "HVM64": "ami-c1cf79bc"
+      },      
       "eu-central-1": {
         "HVM64": "ami-060cde69"
       },
