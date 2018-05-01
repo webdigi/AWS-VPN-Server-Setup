@@ -34,6 +34,16 @@ Parameters:
     - Standard.VPN-t2.micro
     - High.Speed.VPN-t2.medium
     - Ultra.High.Speed.VPN-m3.xlarge
+  KeyName:
+    Description: (Optional) Select an ssh key pair if you will need SSH access to the machine
+    Type: AWS::EC2::KeyPair::KeyName
+
+Conditions:
+  HasKeyName:
+    Fn::Not:
+    - Fn::Equals:
+      - ''
+      - Ref: KeyName
 
 Mappings:
   AWSInstanceType2Arch:
@@ -91,6 +101,15 @@ Resources:
         - InstanceType
       SecurityGroups:
       - Ref: VPNSecurityGroup
+      - Fn::If:
+        - HasKeyName
+        - Ref: SSHSecurityGroup
+        - Ref: AWS::NoValue
+      KeyName:
+        Fn::If:
+          - HasKeyName
+          - !Ref KeyName
+          - !Ref AWS::NoValue
       Tags:
       - Key: Name
         Value:
@@ -572,6 +591,15 @@ Resources:
       - IpProtocol: udp
         FromPort: '1701'
         ToPort: '1701'
+        CidrIp: 0.0.0.0/0
+  SSHSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: SSH Security Groups
+      SecurityGroupIngress:
+      - IpProtocol: tcp
+        FromPort: '22'
+        ToPort: '22'
         CidrIp: 0.0.0.0/0
 Outputs:
   VPNServerAddress:
