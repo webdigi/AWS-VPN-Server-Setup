@@ -7,6 +7,7 @@ Please refer to the blog article with all details on [setting up your VPN server
 ## Contributing to this open source project
 #### Overview and how the files are setup
 - At the heart of this setup is the cloudformation template which does all the heavy lifting of setting up the AWS server based on parameters (VPN username, password, passphrase) entered by the user.
+- Please update the Unified-Cloud-Formation.yaml and Unified-Cloud-Formation-Key-Name.yaml (for use with Amazon Key pair to ssh to your instance)
 
 ## Further support & updates
 - We look forward to your feedback on how we can improve this system.
