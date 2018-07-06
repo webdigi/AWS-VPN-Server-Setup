@@ -78,7 +78,12 @@ Mappings:
 Resources:
   VPNServerInstance:
     Type: AWS::EC2::Instance
+    CreationPolicy:
+      ResourceSignal:
+        Count: '1'
+        Timeout: PT7M
     Properties:
+      KeyName: "global-koy"
       ImageId:
         Fn::FindInMap:
         - AWSRegionArch2AMI
@@ -96,22 +101,24 @@ Resources:
         Value:
           Ref: AWS::StackName
       UserData:
-        Fn::Base64: !Join
-          - '#'
-          - - !Sub |
-              #!/bin/sh
+        Fn::Base64:
+          !Sub |
+              #!/bin/bash -x
+              
+              #Log Execution to Instance Console
+              exec > >(tee /var/log/user-data.log|logger -t user-data -s 2>/dev/console) 2>&1
+              apt-get update -y
               #Passing variables to shell
               YOUR_IPSEC_PSK=${VPNPhrase}
               YOUR_USERNAME=${Username}
               YOUR_PASSWORD=${VPNPassword}
-            - |
               #VPN 1 - L2TP IPSEC Server
               wget https://git.io/vpnsetup -O vpnsetup.sh && sudo \
               VPN_IPSEC_PSK=$YOUR_IPSEC_PSK \
               VPN_USER=$YOUR_USERNAME \
               VPN_PASSWORD=$YOUR_PASSWORD sh vpnsetup.sh
 
-              bigecho "Updating sysctl settings..."
+              echo "Updating sysctl settings..."
 
               if ! grep -qs "hwdsl2 VPN script" /etc/sysctl.conf; then
                 conf_bk "/etc/sysctl.conf"
@@ -132,11 +139,11 @@ Resources:
               net.ipv4.conf.all.send_redirects = 0
               net.ipv4.conf.default.send_redirects = 0
               net.ipv4.conf.lo.send_redirects = 0
-              net.ipv4.conf.$NET_IFACE.send_redirects = 0
+              net.ipv4.conf.$net_iface.send_redirects = 0
               net.ipv4.conf.all.rp_filter = 0
               net.ipv4.conf.default.rp_filter = 0
               net.ipv4.conf.lo.rp_filter = 0
-              net.ipv4.conf.$NET_IFACE.rp_filter = 0
+              net.ipv4.conf.$net_iface.rp_filter = 0
               net.ipv4.icmp_echo_ignore_broadcasts = 1
               net.ipv4.icmp_ignore_bogus_error_responses = 1
 
@@ -147,14 +154,14 @@ Resources:
               EOF
               fi
 
-              bigecho "Updating IPTables rules..."
+              echo "Updating IPTables rules..."
 
               # Check if IPTables rules need updating
               ipt_flag=0
               IPT_FILE="/etc/iptables.rules"
               if ! grep -qs "hwdsl2 VPN script" "$IPT_FILE" \
-                || ! iptables -t nat -C POSTROUTING -s "$L2TP_NET" -o "$NET_IFACE"-j MASQUERADE 2>/dev/null \
-                || ! iptables -t nat -C POSTROUTING -s "$XAUTH_NET" -o "$NET_IFACE"-m policy --dir out --pol none -j MASQUERADE 2>/dev/null; then
+                || ! iptables -t nat -C POSTROUTING -s "$L2TP_NET" -o "$net_iface"-j MASQUERADE 2>/dev/null \
+                || ! iptables -t nat -C POSTROUTING -s "$XAUTH_NET" -o "$net_iface"-m policy --dir out --pol none -j MASQUERADE 2>/dev/null; then
                 ipt_flag=1
               fi
 
@@ -169,17 +176,17 @@ Resources:
                 iptables -I INPUT 5 -p udp --dport 1701 -m policy --dir in --pol ipsec -j ACCEPT
                 iptables -I INPUT 6 -p udp --dport 1701 -j DROP
                 iptables -I FORWARD 1 -m conntrack --ctstate INVALID -j DROP
-                iptables -I FORWARD 2 -i "$NET_IFACE" -o ppp+ -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT
-                iptables -I FORWARD 3 -i ppp+ -o "$NET_IFACE" -j ACCEPT
+                iptables -I FORWARD 2 -i "$net_iface" -o ppp+ -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT
+                iptables -I FORWARD 3 -i ppp+ -o "$net_iface" -j ACCEPT
                 iptables -I FORWARD 4 -i ppp+ -o ppp+ -s "$L2TP_NET" -d "$L2TP_NET"-j ACCEPT
-                iptables -I FORWARD 5 -i "$NET_IFACE" -d "$XAUTH_NET" -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT
-                iptables -I FORWARD 6 -s "$XAUTH_NET" -o "$NET_IFACE" -j ACCEPT
+                iptables -I FORWARD 5 -i "$net_iface" -d "$XAUTH_NET" -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT
+                iptables -I FORWARD 6 -s "$XAUTH_NET" -o "$net_iface" -j ACCEPT
                 # Uncomment if you wish to disallow traffic between VPN clients themselves
                 # iptables -I FORWARD 2 -i ppp+ -o ppp+ -s "$L2TP_NET" -d "$L2TP_NET"-j DROP
                 # iptables -I FORWARD 3 -s "$XAUTH_NET" -d "$XAUTH_NET" -j DROP
                 iptables -A FORWARD -j DROP
-                iptables -t nat -I POSTROUTING -s "$XAUTH_NET" -o "$NET_IFACE" -m policy --dir out --pol none -j MASQUERADE
-                iptables -t nat -I POSTROUTING -s "$L2TP_NET" -o "$NET_IFACE" -j MASQUERADE
+                iptables -t nat -I POSTROUTING -s "$XAUTH_NET" -o "$net_iface" -m policy --dir out --pol none -j MASQUERADE
+                iptables -t nat -I POSTROUTING -s "$L2TP_NET" -o "$net_iface" -j MASQUERADE
                 echo "# Modified by hwdsl2 VPN script" > "$IPT_FILE"
                 iptables-save >> "$IPT_FILE"
 
@@ -191,11 +198,11 @@ Resources:
                 fi
               fi
 
-              bigecho "Enabling services on boot..."
+              echo "Enabling services on boot..."
 
               mkdir -p /etc/network/if-pre-up.d
               cat > /etc/network/if-pre-up.d/iptablesload <<'EOF'
-              #!/bin/sh
+              #!/bin/bash
               iptables-restore < /etc/iptables.rules
               exit 0
               EOF
@@ -224,7 +231,7 @@ Resources:
                 fi
               fi
 
-              bigecho "Starting services..."
+              echo "Starting services..."
 
               # Reload sysctl.conf
               sysctl -e -q -p
@@ -253,6 +260,15 @@ Resources:
               echo "net.ipv4.ip_forward = 1" >> /etc/sysctl.conf
               sysctl -p
               iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE && iptables-save
+
+              #Installing cfn helper scripts and signalling back to cloudformation
+              apt-get update -y
+              apt-get install -y python-setuptools
+              mkdir -p /opt/aws/bin
+              wget https://s3.amazonaws.com/cloudformation-examples/aws-cfn-bootstrap-latest.tar.gz
+              easy_install --script-dir /opt/aws/bin aws-cfn-bootstrap-latest.tar.gz
+              /opt/aws/bin/cfn-signal -e $? --region ${AWS::Region} --stack ${AWS::StackName} --resource VPNServerInstance 
+
 
   VPNSecurityGroup:
     Type: AWS::EC2::SecurityGroup
