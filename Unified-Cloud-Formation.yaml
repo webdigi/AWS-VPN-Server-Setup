@@ -81,9 +81,8 @@ Resources:
     CreationPolicy:
       ResourceSignal:
         Count: '1'
-        Timeout: PT7M
+        Timeout: PT15M
     Properties:
-      KeyName: "global-koy"
       ImageId:
         Fn::FindInMap:
         - AWSRegionArch2AMI
