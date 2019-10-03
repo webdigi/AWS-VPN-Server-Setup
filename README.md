@@ -1,5 +1,5 @@
 # Rolling out your own private VPN server on AWS cloud in 10 minutes
-Please refer to the blog article with all details on [setting up your VPN server on the AWS cloud using cloudformation templates](https://www.webdigi.co.uk/blog/2015/how-to-setup-your-own-private-secure-free-vpn-on-the-amazon-aws-cloud-in-10-minutes/). You can launch a VPN on any of AWS regions which include Tokyo, Singapore, Sydney, Frankfurt, Ireland, Sao Paulo, N. Virginia, N. California, Oregon, Mumbai, London, Canada central and Seoul.
+Please refer to the blog article with all details on [setting up your VPN server on the AWS cloud using cloudformation templates](https://www.webdigi.co.uk/blog/2015/how-to-setup-your-own-private-secure-free-vpn-on-the-amazon-aws-cloud-in-10-minutes/). You can launch a VPN on most of the AWS regions.
 
 ## Video walkthrough on setting up the server
 [![YouTubeVideo](http://i.imgur.com/OMQUry7.png)](http://youtu.be/fBBERp5CUgo)
@@ -16,6 +16,7 @@ Please refer to the blog article with all details on [setting up your VPN server
 - Your commits and code updates are welcome. Changes are only required to src/templates in most cases. Looking forward to all the pull requests :)
 
 ## Updates
+- 29 Aug 2019 , Added support for Bahrain and Stockholm.
 - 19 Feb 2018, Added Paris (EU-WEST-3) region support.
 - 2 June 2017, we had comments from a few users that some new AWS accounts take a few hours before the account can be activated to use this service.
 - 4 Feb 2017, Added Ohio (US-EAST-2) region support.
