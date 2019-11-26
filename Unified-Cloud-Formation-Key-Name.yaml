@@ -29,23 +29,23 @@ Parameters:
   Size:
     Description: Instance Type
     Type: String
-    Default: Standard.VPN-t2.micro
+    Default: Standard.VPN-t3.micro
     AllowedValues:
-    - Standard.VPN-t2.micro
-    - High.Speed.VPN-t2.medium
-    - Ultra.High.Speed.VPN-m3.xlarge
+    - Standard.VPN-t3.micro
+    - High.Speed.VPN-t3.medium
+    - Ultra.High.Speed.VPN-m5.xlarge
   KeyName:
     Description: Select the ssh key pair
     Type: AWS::EC2::KeyPair::KeyName
 
 Mappings:
   AWSInstanceType2Arch:
-    Standard.VPN-t2.micro:
-      InstanceType: t2.micro
-    High.Speed.VPN-t2.medium:
-      InstanceType: t2.medium
+    Standard.VPN-t3.micro:
+      InstanceType: t3.micro
+    High.Speed.VPN-t3.medium:
+      InstanceType: t3.medium
     Ultra.High.Speed.VPN-m3.xlarge:
-      InstanceType: m3.xlarge
+      InstanceType: m5.xlarge
   AWSRegionArch2AMI:
     us-east-1:
       HVM64: ami-80861296
@@ -77,6 +77,12 @@ Mappings:
       HVM64: ami-c2ee9dad
     ca-central-1:
       HVM64: ami-b3d965d7
+    eu-north-1:
+      HVM64: ami-1dab2163
+    me-south-1:
+      HVM64: ami-01011404880c390bf
+    ap-east-1:
+      HVM64: ami-59780228
 
 Resources:
   VPNServerInstance:
