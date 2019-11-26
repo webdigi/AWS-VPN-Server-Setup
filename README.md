@@ -16,6 +16,7 @@ Please refer to the blog article with all details on [setting up your VPN server
 - Your commits and code updates are welcome. Changes are only required to src/templates in most cases. Looking forward to all the pull requests :)
 
 ## Updates
+- 26 Nov 2019, Added support for HongKong and changed VPN method. Also, please note t3 instances are used by default as many new regions do not support t2. This could affect free usage in certain regions.
 - 29 Aug 2019 , Added support for Bahrain and Stockholm.
 - 19 Feb 2018, Added Paris (EU-WEST-3) region support.
 - 2 June 2017, we had comments from a few users that some new AWS accounts take a few hours before the account can be activated to use this service.
