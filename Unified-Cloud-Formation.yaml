@@ -78,6 +78,8 @@ Mappings:
       HVM64: ami-ada823d3
     me-south-1:
       HVM64: ami-0242bb9d841363c5c
+    ap-east-1:
+      HVM64: ami-59780228      
 
 Resources:
   VPNServerInstance:
