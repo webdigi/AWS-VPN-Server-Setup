@@ -34,6 +34,13 @@ Parameters:
     - Standard.VPN-t3.micro
     - High.Speed.VPN-t3.medium
     - Ultra.High.Speed.VPN-m5.xlarge
+  DNSServer:
+    Description: DNS Servers
+    Type: String
+    Default: Google
+    AllowedValues:
+    - Google
+    - CloudFlare
   KeyName:
     Description: Select the ssh key pair
     Type: AWS::EC2::KeyPair::KeyName
@@ -46,6 +53,13 @@ Mappings:
       InstanceType: t3.medium
     Ultra.High.Speed.VPN-m3.xlarge:
       InstanceType: m5.xlarge
+  DNSServers:
+    Google:
+      Server1: "8.8.8.8"
+      Server2: "8.8.4.4"
+    CloudFlare:
+      Server1: "1.1.1.1"
+      Server2: "1.0.0.1"
   AWSRegionArch2AMI:
     us-east-1:
       HVM64: ami-80861296
@@ -107,33 +121,43 @@ Resources:
         Value:
           Ref: AWS::StackName
       UserData:
-        Fn::Base64: !Join
-          - '#'
-          - - !Sub |
-              #!/bin/sh
-              #Passing variables to shell
-              YOUR_IPSEC_PSK=${VPNPhrase}
-              YOUR_USERNAME=${Username}
-              YOUR_PASSWORD=${VPNPassword}
-            - |
-              #VPN 1 - L2TP IPSEC Server
-              wget https://git.io/vpnsetup -O vpnsetup.sh && sudo \
-              VPN_IPSEC_PSK=$YOUR_IPSEC_PSK \
-              VPN_USER=$YOUR_USERNAME \
-              VPN_PASSWORD=$YOUR_PASSWORD sh vpnsetup.sh
+        Fn::Base64: !Sub
+          - |
+            #!/bin/sh
+            #Passing variables to shell
+            YOUR_IPSEC_PSK=${VPNPhrase}
+            YOUR_USERNAME=${Username}
+            YOUR_PASSWORD=${VPNPassword}
+            #VPN 1 - L2TP IPSEC Server
+            wget https://git.io/vpnsetup -O vpnsetup.sh && sudo \
+            VPN_IPSEC_PSK=$YOUR_IPSEC_PSK \
+            VPN_DNS_SRV1=${DNSServer1} \
+            VPN_DNS_SRV2=${DNSServer2} \
+            VPN_USER=$YOUR_USERNAME \
+            VPN_PASSWORD=$YOUR_PASSWORD sh vpnsetup.sh
 
-              #VPN 2 - Setup PPTP Server
-              apt-get install pptpd -y
-              echo "localip 10.0.0.1" >> /etc/pptpd.conf
-              echo "remoteip 10.0.0.100-200" >> /etc/pptpd.conf
-              echo "$YOUR_USERNAME pptpd $YOUR_PASSWORD *" >> /etc/ppp/chap-secrets
-              echo "ms-dns 8.8.8.8" >> /etc/ppp/pptpd-options
-              echo "ms-dns 8.8.4.4" >> /etc/ppp/pptpd-options
-              service pptpd restart
+            #VPN 2 - Setup PPTP Server
+            apt-get install pptpd -y
+            echo "localip 10.0.0.1" >> /etc/pptpd.conf
+            echo "remoteip 10.0.0.100-200" >> /etc/pptpd.conf
+            echo "$YOUR_USERNAME pptpd $YOUR_PASSWORD *" >> /etc/ppp/chap-secrets
+            echo "ms-dns ${DNSServer1}" >> /etc/ppp/pptpd-options
+            echo "ms-dns ${DNSServer2}" >> /etc/ppp/pptpd-options
+            service pptpd restart
 
-              echo "net.ipv4.ip_forward = 1" >> /etc/sysctl.conf
-              sysctl -p
-              iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE && iptables-save
+            echo "net.ipv4.ip_forward = 1" >> /etc/sysctl.conf
+            sysctl -p
+            iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE && iptables-save
+          - DNSServer1: 
+              Fn::FindInMap:
+                - DNSServers
+                - Ref: DNSServer
+                - Server1
+            DNSServer2:
+              Fn::FindInMap:
+                - DNSServers
+                - Ref: DNSServer
+                - Server2
 
   VPNSecurityGroup:
     Type: AWS::EC2::SecurityGroup
