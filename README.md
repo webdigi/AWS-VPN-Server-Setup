@@ -12,6 +12,7 @@ Please refer to the blog article with all details on [setting up your VPN server
 ## Further support & updates
 - We look forward to your feedback on how we can improve this system.
 - Vast majority of the support requests can be resolved if users wait 5 - 10 minutes after the VPN is created. This is because the IP address output shows before installation of supporting libraries are complete.
+- If you want a [static IP then see this ticket](https://github.com/webdigi/AWS-VPN-Server-Setup/issues/78)
 - We currently setup VPN with PPTP and L2TP-IPSEC. This can be extended to include openvpn support and enhancements.
 - Your commits and code updates are welcome. Changes are only required to src/templates in most cases. Looking forward to all the pull requests :)
 
